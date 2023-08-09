@@ -51,7 +51,9 @@ const OtxApp = () => {
     const keywordArray = keywords
       .split(",")
       .map((keyword) => keyword.trim().toLowerCase());
-    const regex = new RegExp(`(${keywordArray.join("|")})`, "gi");
+
+    const escapedKeywords = keywordArray.map(RegExp.escape).join("|");
+    const regex = new RegExp(`(${escapedKeywords})`, "gi");
 
     return url.split(regex).map((part, index) => {
       if (keywordArray.includes(part.toLowerCase())) {
@@ -65,6 +67,11 @@ const OtxApp = () => {
     });
   };
 
+  // Add a static escape function to RegExp
+  RegExp.escape = function (string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+  };
+
   const handleFilterChange = (e) => {
     setFilterParams(e.target.value);
   };
@@ -73,15 +80,15 @@ const OtxApp = () => {
     fetchData();
   };
 
-  const handleNextClick = () => {
-    setPage((prevPage) => prevPage + 1);
-  };
+  // const handleNextClick = () => {
+  //   setPage((prevPage) => prevPage + 1);
+  // };
 
-  const handlePreviousClick = () => {
-    if (page > 1) {
-      setPage((prevPage) => prevPage - 1);
-    }
-  };
+  // const handlePreviousClick = () => {
+  //   if (page > 1) {
+  //     setPage((prevPage) => prevPage - 1);
+  //   }
+  // };
 
   return (
     <div>
@@ -132,7 +139,11 @@ const OtxApp = () => {
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>
-                      <a href={item.url}>
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {highlightKeywords(item.url, filterParams)}
                       </a>
                     </td>
@@ -147,35 +158,6 @@ const OtxApp = () => {
         ) : (
           <p>No data to display</p>
         )}
-
-        {/* {data && data.length > 0 ? (
-          <table className="custom-table">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>URL</th>
-                <th>Date</th>
-                <th>Domain</th>
-                <th>Hostname</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((item, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <a href={item.url}>{item.url}</a>
-                  </td>
-                  <td>{item.date}</td>
-                  <td>{item.domain}</td>
-                  <td>{item.hostname}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>No data to display</p>
-        )} */}
       </div>
       {/* <div className="input-container">
         <button onClick={handlePreviousClick}>Previous</button>
