@@ -57,7 +57,7 @@ function TesXss() {
       <head>
 		<body>
     <h1>hacked by snvm</h1>
-    <svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.cookie)"/>
+    <svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.domain)"/>
     </body>
     </html>
   `;
