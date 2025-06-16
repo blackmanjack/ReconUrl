@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+// import axios from "axios";
 import "./OtxApp.css"; // Import the CSS file
 
 const OtxApp = () => {
   const [domain, setDomain] = useState("");
-  const [limit, setLimit] = useState(10); // Default value for limit
-  const [page, setPage] = useState(1); // Default value for page
+  const [error, setError] = useState("");
+  // const [limit, setLimit] = useState(10); // Default value for limit
+  // const [page, setPage] = useState(1); // Default value for page
   const [filterParams, setFilterParams] = useState("");
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -14,6 +15,7 @@ const OtxApp = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
+
       const response = await fetch(
         `https://otx.alienvault.com/api/v1/indicators/domain/${domain}/url_list?limit=100000000`
       );
@@ -76,7 +78,24 @@ const OtxApp = () => {
     setFilterParams(e.target.value);
   };
 
+  function isValidDomain(input) {
+    const domainRegex = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+    return domainRegex.test(input);
+  }
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   // You can proceed to submit or process here
+  // };
+
   const handleFetchClick = () => {
+    if (!isValidDomain(domain)) {
+      alert("Please enter a valid domain, e.g., example.com");
+      return;
+    }
+    setError("");
+    // alert("Domain is valid: " + domain);
     fetchData();
   };
 
@@ -99,6 +118,7 @@ const OtxApp = () => {
           onChange={(e) => setDomain(e.target.value)}
           placeholder="Enter Domain"
         />
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         {/* <input
           type="number"
           value={limit}
